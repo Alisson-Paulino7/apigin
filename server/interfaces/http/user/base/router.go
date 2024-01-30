@@ -5,7 +5,7 @@ import "github.com/gin-gonic/gin"
 func Router(r *gin.RouterGroup) {
 	r.GET("", findAll)
 	r.POST("", create)
-	r.GET(":base_id", findByID)
-	r.PUT(":base_id", update)
-	r.DELETE(":base_id", delete)
+	r.GET(":user_id", findByID)
+	r.PUT(":user_id", update)
+	r.DELETE(":user_id", delete)
 }
