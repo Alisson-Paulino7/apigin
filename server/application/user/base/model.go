@@ -29,6 +29,7 @@ type UpdateRequest struct {
 }
 
 type FindAllResponse struct {
+	Users []FindByIDResponse `json:"users,omitempty"`
 }
 
 type FindByIDResponse struct {
