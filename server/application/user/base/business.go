@@ -3,6 +3,8 @@ package base
 import (
 	"context"
 
+	"github.com/alisson-paulino7/apigin/database"
+	"github.com/alisson-paulino7/apigin/domain/user/base"
 	"github.com/google/uuid"
 )
 
@@ -11,7 +13,7 @@ import (
 
 // Find all Users
 func FindAll(ctx context.Context) (out *FindAllResponse, err error) {
-
+	
 	return nil, nil
 }
 
@@ -29,13 +31,29 @@ func FindByID(ctx context.Context, in *uuid.UUID) (out *FindByIDResponse, err er
 // Create an User
 func Create(ctx context.Context, in *CreateRequest) (out *CreateResponse, err error) {
 
-	out = &CreateResponse{
-		Name:     in.Name,
-		Age:      in.Age,
-		Document: in.Document,
+	tx, err := database.NewTransation(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	return out, nil
+	repository := base.NewRepository(ctx, tx)
+
+	usr := &base.User{
+		Name: 		in.Name,
+		Age: 		in.Age,
+		Document: 	in.Document,
+	}
+	if err := repository.Insert(usr); err != nil {
+		return nil, err
+	} 
+
+	return &CreateResponse{
+		ID: 	  	usr.ID,
+		CreatedAt: 	usr.CreatedAt,
+		Name:     	usr.Name,
+		Age:      	usr.Age,
+		Document: 	usr.Document,
+	},nil
 
 }
 

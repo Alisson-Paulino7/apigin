@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/alisson-paulino7/apigin/config"
+	"github.com/alisson-paulino7/apigin/database"
 	"github.com/alisson-paulino7/apigin/interfaces/http/user"
 	"github.com/gin-gonic/gin"
 )
@@ -13,6 +14,10 @@ import (
 func main() {
 
 	if err := config.Load(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := database.Init(); err != nil {
 		log.Fatal(err)
 	}
 
