@@ -46,6 +46,11 @@ func Create(ctx context.Context, in *CreateRequest) (out *CreateResponse, err er
 	if err := repository.Insert(usr); err != nil {
 		return nil, err
 	} 
+	defer tx.Rollback()	
+
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
 
 	return &CreateResponse{
 		ID: 	  	usr.ID,
