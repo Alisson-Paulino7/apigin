@@ -12,6 +12,16 @@ import (
 	"github.com/google/uuid"
 )
 
+const delete = `-- name: Delete :exec
+DELETE FROM "user".t_user
+WHERE id = $1
+`
+
+func (q *Queries) Delete(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, delete, id)
+	return err
+}
+
 const findByID = `-- name: FindByID :one
 SELECT id, created_at, updated_at, deleted_at, name, age, document FROM "user".t_user
 WHERE id = $1

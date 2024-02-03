@@ -10,3 +10,7 @@ WHERE id = @id;
 -- name: Update :exec
 UPDATE "user".t_user SET "name" = @name , age = @age, document = @document 
 WHERE id = @id;
+
+-- name: Delete :exec
+DELETE FROM "user".t_user
+WHERE id = @id;

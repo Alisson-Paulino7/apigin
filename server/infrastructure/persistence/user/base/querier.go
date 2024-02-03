@@ -11,6 +11,7 @@ import (
 )
 
 type Querier interface {
+	Delete(ctx context.Context, id uuid.UUID) error
 	FindByID(ctx context.Context, id uuid.UUID) (*UserTUser, error)
 	Insert(ctx context.Context, arg *InsertParams) (*InsertRow, error)
 	Update(ctx context.Context, arg *UpdateParams) error

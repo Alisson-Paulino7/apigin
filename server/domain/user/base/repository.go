@@ -76,3 +76,10 @@ func (r *repository) Update(user *User) error {
 	}
 	return nil
 }
+
+func (r *repository) Delete(id uuid.UUID) error {	
+	if err := base.New(r.tx).Delete(r.ctx, id); err != nil {
+		return err
+	}
+	return nil
+}

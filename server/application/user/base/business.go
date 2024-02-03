@@ -106,5 +106,16 @@ func Update(ctx context.Context, in *UpdateRequest) error {
 
 // Delete an User
 func Delete(ctx context.Context, in *uuid.UUID) error {
+
+	tx, err := database.NewTransation(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	repository := base.NewRepository(ctx, tx)
+
+	if err := repository.Delete(*in); err != nil {
+		return err
+	}
 	return nil
 }
