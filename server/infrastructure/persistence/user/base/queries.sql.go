@@ -12,8 +12,27 @@ import (
 	"github.com/google/uuid"
 )
 
-const insert = `-- name: Insert :one
+const findByID = `-- name: FindByID :one
+SELECT id, created_at, updated_at, deleted_at, name, age, document FROM "user".t_user
+WHERE id = $1
+`
 
+func (q *Queries) FindByID(ctx context.Context, id uuid.UUID) (*UserTUser, error) {
+	row := q.db.QueryRowContext(ctx, findByID, id)
+	var i UserTUser
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.Name,
+		&i.Age,
+		&i.Document,
+	)
+	return &i, err
+}
+
+const insert = `-- name: Insert :one
 INSERT INTO "user".t_user("name", age, document)
 VALUES ($1, $2, $3)
 RETURNING "id", "created_at", "name", "age", "document"
@@ -44,4 +63,26 @@ func (q *Queries) Insert(ctx context.Context, arg *InsertParams) (*InsertRow, er
 		&i.Document,
 	)
 	return &i, err
+}
+
+const update = `-- name: Update :exec
+UPDATE "user".t_user SET "name" = $1 , age = $2, document = $3 
+WHERE id = $4
+`
+
+type UpdateParams struct {
+	Name     string
+	Age      int32
+	Document string
+	ID       uuid.UUID
+}
+
+func (q *Queries) Update(ctx context.Context, arg *UpdateParams) error {
+	_, err := q.db.ExecContext(ctx, update,
+		arg.Name,
+		arg.Age,
+		arg.Document,
+		arg.ID,
+	)
+	return err
 }

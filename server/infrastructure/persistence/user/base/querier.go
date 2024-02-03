@@ -6,10 +6,14 @@ package base
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 type Querier interface {
+	FindByID(ctx context.Context, id uuid.UUID) (*UserTUser, error)
 	Insert(ctx context.Context, arg *InsertParams) (*InsertRow, error)
+	Update(ctx context.Context, arg *UpdateParams) error
 }
 
 var _ Querier = (*Queries)(nil)
