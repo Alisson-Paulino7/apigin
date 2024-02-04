@@ -12,5 +12,9 @@ UPDATE "user".t_user SET "name" = @name , age = @age, document = @document
 WHERE id = @id;
 
 -- name: Delete :exec
-DELETE FROM "user".t_user
+UPDATE "user".t_user SET deleted_at = NOW()
 WHERE id = @id;
+
+-- name: FindAll :many
+SELECT * FROM "user".t_user
+ORDER BY "name" ASC;

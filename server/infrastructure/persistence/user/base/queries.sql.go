@@ -13,13 +13,49 @@ import (
 )
 
 const delete = `-- name: Delete :exec
-DELETE FROM "user".t_user
+UPDATE "user".t_user SET deleted_at = NOW()
 WHERE id = $1
 `
 
 func (q *Queries) Delete(ctx context.Context, id uuid.UUID) error {
 	_, err := q.db.ExecContext(ctx, delete, id)
 	return err
+}
+
+const findAll = `-- name: FindAll :many
+SELECT id, created_at, updated_at, deleted_at, name, age, document FROM "user".t_user
+ORDER BY "name" ASC
+`
+
+func (q *Queries) FindAll(ctx context.Context) ([]*UserTUser, error) {
+	rows, err := q.db.QueryContext(ctx, findAll)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*UserTUser
+	for rows.Next() {
+		var i UserTUser
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.Name,
+			&i.Age,
+			&i.Document,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const findByID = `-- name: FindByID :one

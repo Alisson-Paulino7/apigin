@@ -83,3 +83,23 @@ func (r *repository) Delete(id uuid.UUID) error {
 	}
 	return nil
 }
+
+func (r *repository) FindAll() ([]*User, error) {
+	rows, err := base.New(r.tx).FindAll(r.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*User
+	for _, row := range rows {
+		users = append(users, &User{
+			ID:        &row.ID,
+			CreatedAt: &row.CreatedAt,
+			UpdatedAt: utils.ValidTime(row.UpdatedAt),
+			Name:      &row.Name,
+			Age:       utils.PointerInt(int(row.Age)),
+			Document:  &row.Document,
+		})
+	}
+	return users, nil
+}

@@ -71,10 +71,14 @@ func findByID(ctx *gin.Context) {
 }
 
 func findAll(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK,
-		gin.H{
-			"method": "GET",
+
+	response, err := base.FindAll(ctx)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
 		})
+	}
+	ctx.JSON(http.StatusOK, response)
 }
 
 func update(ctx *gin.Context) {

@@ -28,9 +28,9 @@ type UpdateRequest struct {
 	Document *string    `json:"document"`
 }
 
-type FindAllResponse struct {
-	Users []FindByIDResponse `json:"users,omitempty"`
-}
+// type FindAllResponse struct {
+// 	Users FindByIDResponse `json:"users,omitempty"`
+// }
 
 type FindByIDResponse struct {
 	ID        *uuid.UUID `json:"id"`

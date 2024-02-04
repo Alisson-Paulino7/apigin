@@ -12,9 +12,33 @@ import (
 // Cada requisição tem um contexto específico
 
 // Find all Users
-func FindAll(ctx context.Context) (out *FindAllResponse, err error) {
+func FindAll(ctx context.Context) (out []*FindByIDResponse, err error) {
 	
-	return nil, nil
+	tx, err := database.NewTransation(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+	repository := base.NewRepository(ctx, tx)
+
+
+	results, err := repository.FindAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*FindByIDResponse
+	for _, result := range results {
+		users = append(users, &FindByIDResponse{
+			ID:        result.ID,
+			CreatedAt: result.CreatedAt,
+			UpdatedAt: result.UpdatedAt,
+			Name:      result.Name,
+			Age:       result.Age,
+			Document:  result.Document,
+		})
+	}
+	return users, nil
 }
 
 // Find an User by ID
@@ -115,6 +139,10 @@ func Delete(ctx context.Context, in *uuid.UUID) error {
 	repository := base.NewRepository(ctx, tx)
 
 	if err := repository.Delete(*in); err != nil {
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
 		return err
 	}
 	return nil
